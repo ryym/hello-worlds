@@ -1,0 +1,6 @@
+#!/bin/bash
+
+srcFile="src/$1.c"
+binFile="bin/$1"
+
+gcc -Wall -g -o $binFile $srcFile
