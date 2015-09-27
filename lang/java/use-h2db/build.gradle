@@ -1,0 +1,16 @@
+apply {
+    plugin 'java'
+    plugin 'eclipse'
+    plugin 'application'
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    compile 'com.h2database:h2:1.4.187'
+}
+
+mainClassName = 'hello.h2.Main'
