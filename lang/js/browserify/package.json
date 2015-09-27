@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "browserify": "latest",
+    "unique": "latest"
+  }
+}
