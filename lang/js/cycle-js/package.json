@@ -1,0 +1,29 @@
+{
+  "name": "cycle-example",
+  "version": "1.0.0",
+  "description": "hello, cycle.js",
+  "main": "main.js",
+  "scripts": {
+    "start": "watchify -o build/bundle.js main.js & http-server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "browserify": {
+    "transform": [
+      "babelify"
+    ]
+  },
+  "dependencies": {
+    "@cycle/core": "^5.0.1",
+    "@cycle/dom": "^7.1.1",
+    "@cycle/http": "^6.0.0",
+    "rx": "^4.0.6"
+  },
+  "devDependencies": {
+    "babelify": "^6.3.0",
+    "browserify": "^11.2.0",
+    "http-server": "^0.8.5",
+    "watchify": "^3.4.0"
+  }
+}
