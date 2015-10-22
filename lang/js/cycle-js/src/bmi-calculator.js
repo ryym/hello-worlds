@@ -14,11 +14,8 @@ function calculateBMI(weight, height) {
  */
 function intent(DOM) {
   return {
-    changeWeight$: DOM.select('#weight').events('input')
-      .map(ev => ev.target.value),
-
-    changeHeight$: DOM.select('#height').events('input')
-      .map(ev => ev.target.value)
+    changeWeight$: getSliderEvent(DOM, 'weight'),
+    changeHeight$: getSliderEvent(DOM, 'height'),
   };
 }
 
@@ -54,30 +51,28 @@ function view(state$) {
   });
 }
 
-function renderWeightSlider(weight) {
+function getSliderEvent(DOM, id) {
+  return DOM.select('#' + id).events('input').map(ev => ev.target.value);
+}
+
+function renderSlider(label, value, unit, id, min, max) {
   return h('div', [
-      `Weight ${weight}kg`,
-      h('input#weight', {
-        type  : 'range',
-        value : weight,
-        min   : 40,
-        max   : 140
-      })
+    '' + label + ' ' + value + unit,
+    h('input#' + id, { type: 'range', min, max, value })
   ]);
+}
+
+function renderWeightSlider(weight) {
+  return renderSlider('Weight', weight, 'kg', 'weight', 40, 140);
 }
 
 function renderHeightSlider(height) {
-  return h('div', [
-      `Height ${height}cm`,
-      h('input#height', {
-        type  : 'range',
-        value : height,
-        min   : 140,
-        max   : 210
-      })
-  ]);
+  return renderSlider('Height', height, 'cm', 'height', 140, 210);
 }
 
+/**
+ * Main function.
+ */
 function main({ DOM }) {
   return { DOM: view(model( intent(DOM) )) };
 }
