@@ -7,6 +7,19 @@ function calculateBMI(weight, height) {
   return Math.round( weight / (heightMeters * heightMeters) );
 }
 
+/*
+ * Intent: human(user's actions in DOM) -> computer(action streams)
+ * View:   computer(action streams)     -> human(visuall DOM Tree)
+ *
+ * user =>> view =>> model =>> intent =>> user
+ * (=>> : observes)
+ *
+ * Each section 'reacts' to the action from the other it observes.
+ * Cycle.js intends to represent these reactivities by a chain of
+ * referencially transparent functions over Observables.
+ * (MVI as a 'slicing' of `main()` function)
+ */
+
 /**
  * Interpret DOM events as user's intended actions.
  * @param  DOM DOM Driver responses
