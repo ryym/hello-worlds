@@ -15,3 +15,14 @@ randomUser();
 counter();
 bmiCalculator();
 bmiCalculator2();
+
+
+/*
+ * Note about Drivers
+ *
+ * Drivers are side-effectful functions with Observables as input and output.
+ * They read from the external world and write side effects.
+ * They should focus solely on being an interface for effects.
+ * By isolating side effects as Drivers, `main()` function can focus on business
+ * logic related to the app's behivour.
+ */
