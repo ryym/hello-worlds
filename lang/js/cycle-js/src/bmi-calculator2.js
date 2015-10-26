@@ -13,7 +13,7 @@ import {h, makeDOMDriver} from '@cycle/dom';
 /**
  * Labeled slider element
  */
-function labeledSlider(responses) {
+function labeledSlider({props, DOM}) {
   function intent(DOM) {
     return {
       changeValue$: DOM.select('.slider').events('input')
@@ -21,10 +21,10 @@ function labeledSlider(responses) {
     };
   }
 
-  function model(context, actions) {
-    let initialValue$ = context.props.get('initial').first();
+  function model(props, actions) {
+    let initialValue$ = props.get('initial').first();
     let value$ = initialValue$.concat(actions.changeValue$);
-    let props$ = context.props.getAll();
+    let props$ = props.getAll();
     return Rx.Observable.combineLatest(props$, value$,
       (props, value) => { return {props, value}; }
     );
@@ -48,8 +48,8 @@ function labeledSlider(responses) {
     });
   }
 
-  let actions = intent(responses.DOM);
-  let vtree$  = view( model(responses, actions) );
+  let actions = intent(DOM);
+  let vtree$  = view( model(props, actions) );
   return {
     DOM: vtree$,
     events: {
@@ -91,17 +91,21 @@ function view(state$) {
       h('h1', 'BMI Calulator Example 2'),
 
       h('labeled-slider#weight', {
-        key: 1, unit: 'kg',
-        initial: weight,
-        min: 40, max: 140
+        key     : 1,
+        unit    : 'kg',
+        initial : weight,
+        min     : 40,
+        max     : 140
       }, [
         h('h2', 'Weight')
       ]),
 
       h('labeled-slider#height', {
-        key: 2, unit: 'cm',
-        initial: height,
-        min: 140, max: 210
+        key     : 2,
+        unit    : 'cm',
+        initial : height,
+        min     : 140,
+        max     : 210
       }, [
         h('h4', 'Height')
       ]),
