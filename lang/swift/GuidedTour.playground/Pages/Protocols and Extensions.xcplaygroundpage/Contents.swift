@@ -2,6 +2,7 @@
 //:
 //: Use `protocol` to declare a protocol.
 //:
+// Javaでいうinterfaceか
 protocol ExampleProtocol {
      var simpleDescription: String { get }
      mutating func adjust()
@@ -30,6 +31,23 @@ var b = SimpleStructure()
 b.adjust()
 let bDescription = b.simpleDescription
 
+// Experiment
+enum SimpleEnum: ExampleProtocol {
+    case A, B
+    
+    var simpleDescription: String {
+        get {
+            return "A simple enum"
+        }
+        set { newValue }
+    }
+
+    // structureとenumurationは自身のプロパティを変更してはいけないらしい。
+    // 変更したい場合は、こうして明示的にmutating修飾子をつける必要がある。
+    mutating func adjust() {
+        simpleDescription += ""
+    }
+}
 //: - Experiment:
 //: Write an enumeration that conforms to this protocol.
 //:
@@ -37,6 +55,7 @@ let bDescription = b.simpleDescription
 //:
 //: Use `extension` to add functionality to an existing type, such as new methods and computed properties. You can use an extension to add protocol conformance to a type that is declared elsewhere, or even to a type that you imported from a library or framework.
 //:
+// 既存の型に自作のprotocolを適用できる
 extension Int: ExampleProtocol {
     var simpleDescription: String {
         return "The number \(self)"
@@ -46,6 +65,21 @@ extension Int: ExampleProtocol {
     }
  }
 print(7.simpleDescription)
+
+
+// なんとprotocolなしでも拡張できる..!
+// ただし試してみたところif文の中などでは宣言できないから、
+// 実行時にその型のプロパティやメソッドが動的に変化する、という事はなさげ。
+// こういう感じでビルトインの型を拡張したり、外部の型に自作のprotocolを適用したりしたい場合に
+// 使うっぽい。
+extension Double {
+    func absoluteValue() -> Double {
+        return self >= 0 ? self : self * -1
+    }
+}
+
+(-4.0).absoluteValue()
+
 
 //: - Experiment:
 //: Write an extension for the `Double` type that adds an `absoluteValue` property.

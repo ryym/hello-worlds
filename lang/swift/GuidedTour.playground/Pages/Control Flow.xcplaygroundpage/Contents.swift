@@ -115,6 +115,8 @@ print(m)
 
 //: You can keep an index in a loop by using `..<` to make a range of indexes.
 //:
+// ..< と ... の記法は、Rubyにおける同じ意味の ... と .. の100倍わかりやすい
+
 var total = 0
 for i in 0..<4 {  // 0,1,2,3
     total += i
