@@ -10,6 +10,20 @@ func greet(name: String, day: String, other: String) -> String {
 greet("Bob", day: "Tuesday", other: "a")
 greet("a", day: "ab", other: "goodbye")
 
+// 関数呼び出しのラベル指定はやはりそういう仕様らしい。しかし、ラベルは呼び出し側用のものと
+// 関数内で使う用の2つを定義できるので、以下のようにしてラベルの要否をコントロールする事はできる。
+// https://developer.apple.com/library/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Functions.html#//apple_ref/doc/uid/TP40014097-CH10-ID166
+
+func needLabels(aLabel l1: Int, bLabel l2: Int) -> Int {
+    return l1 + l2
+}
+
+func unneedLabels(l1: Int, _ l2: Int) -> Int {
+    return l1 + l2
+}
+
+needLabels(aLabel: 1, bLabel: 2)
+unneedLabels(1, 2)
 //: - Experiment:
 //: Remove the `day` parameter. Add a parameter to include today’s lunch special in the greeting.
 //:
