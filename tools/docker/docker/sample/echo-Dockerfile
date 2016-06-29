@@ -1,0 +1,10 @@
+FROM centos:latest
+
+# ENTRyPOINTもCMDもともに`docker run`時に実行されるコマンドだが、
+# CMDのみ実行時に上書きできる。なのでこのDockerfileの場合、
+# 普通に`run`すると"this is default arguments of echo"と表示され、
+# `run sample-echo a b c`のように引数を上書きすれば`a b c`と表示される。
+# 逆にいえば、こうしてENTRYPOINTとCMDを併用した場合、CMDは必ず
+# ENTRYPOINTで指定した実行コマンドの引数として使われる事になるっぽい。
+ENTRYPOINT ["echo"]
+CMD ["this", "is default arguments of echo"]
