@@ -42,4 +42,4 @@ http://deeeet.com/writing/2014/05/11/docker-network/
 
 例えば`httpd`のDockerをバックグラウンドで走らせても、ホストから`curl http://localhost:8080`という風にはアクセスできない。これは、コンテナにマッピングされるのは実際にそのコンテナをホストしているVMのポートのため。なので`docker-machine ssh default`してVMに入り、その中からなら上記のコマンドで`httpd`のレスポンスを確認できる。つまりローカルのマシンから`httpd`にアクセスするには、ローカルのマシンではなくVMの8080ポートにアクセスする必要がある。VMのIPは`docker-machine ip default`で確認できる。
 
-
+これだと`cp`コマンドやDockerfile内のADD,COPYもdocker-machine経由だと上手くいかないのではと思ったが、これらは普通に使えた。便利。
