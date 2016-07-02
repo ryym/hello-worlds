@@ -1,0 +1,6 @@
+FROM centos:latest
+
+RUN ["mkdir", "/var/log/httpd"]
+
+# Specify the mount point.
+VOLUME /var/log/httpd
