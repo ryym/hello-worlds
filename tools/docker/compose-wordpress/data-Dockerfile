@@ -1,0 +1,10 @@
+# The data only Dockerfile which stores mysql data.
+
+FROM busybox
+
+MAINTAINER ryym
+
+VOLUME /var/lib/mysql
+
+# We can backup the dataonly container as a tar file:
+#   docker export dataonly > backup.tar

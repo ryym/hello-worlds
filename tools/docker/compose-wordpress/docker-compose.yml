@@ -1,0 +1,26 @@
+# Web server
+webserver:
+  image: wordpress
+
+  ports:
+    # Quotes are required.
+    - "80:80"
+
+  links:
+    # Wordpress image requires a link named "mysql".
+    - "dbserver:mysql"
+
+# DB server
+dbserver:
+  image: mysql
+
+  volumes_from:
+    - dataonly
+
+  environment:
+    MYSQL_ROOT_PASSWORD: password
+
+
+# dockerコマンドだと`run`でコンテナプロセスを起動するが、
+# docker-composeの場合は`up`で起動する。`docker-compose run [container] [command]`は
+# 任意のコマンドを指定したコンテナで実行するので`docker exec`に近い?
