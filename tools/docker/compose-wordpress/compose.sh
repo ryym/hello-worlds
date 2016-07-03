@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 docker-compose stop
-docker-compose rm
+docker-compose rm -f
 
 docker rm -f dataonly > /dev/null 2>&1
 docker rmi dataonly > /dev/null 2>&1

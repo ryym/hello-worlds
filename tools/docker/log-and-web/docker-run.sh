@@ -1,21 +1,21 @@
 #!/usr/bin/env bash
 
 # Remove old images and containers.
-docker rmi sample-log sample-web \
-    > /dev/null 2>&1
 docker rm -f web-container log-container \
+    > /dev/null 2>&1
+docker rmi sample-log sample-web \
     > /dev/null 2>&1
 
 # Build log and web images.
 
 docker build \
     -t sample-log \
-    -f log-Dockerfile \
+    -f Dockerfile.log \
     .
 
 docker build \
     -t sample-web \
-    -f web-Dockerfile \
+    -f Dockerfile.web \
     .
 
 # Run containers.
