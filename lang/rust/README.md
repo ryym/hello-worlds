@@ -1,2 +1,3 @@
 - https://www.rust-lang.org/en-US/
 - https://doc.rust-lang.org/book/README.html
+- https://crates.io/
