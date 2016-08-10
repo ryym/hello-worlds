@@ -2,7 +2,21 @@
 
 https://www.docker.com/
 
-2016/06/26時点で、DockerはLinux上で動くツールなので、MacやWindows上で使いたい場合にはLinuxのVMが必要になる(ただし今は、beta版だがMac上でネイティブにDockerを動かす Docker for Mac もある)。
+## Docker for Mac
+
+Docker for Mac が正式にリリースされ、Macでも`docker-machine`を使わずにDockerを使用できるようになった。
+既存の`default`VMからの移行や共存も可能 (<https://docs.docker.com/docker-for-mac/docker-toolbox/>)。
+インストールはスムーズだったが、一度再起動しないと`Cannot connect to the Docker daemon.`と言われた。
+しかし、あまり意識せずに済むようになっただけで結局VMは動いているっぽい？
+
+### Mount volumes
+
+<https://docs.docker.com/engine/tutorials/dockervolumes/#mount-a-host-directory-as-a-data-volume>
+
+Docker for Mac を使えば、VMでなくMacのファイルシステム上のパスを直接コンテナにマウントできる。ただし、
+マウントできるパスは決まっているっぽく、それに属さないパスは全てVMのパスと認識されるらしい。
+例えば`/Users`以下はマウント可能だが、要はDockerのデーモンVMに対してこのディレクトリがマウントされており、
+それを更にコンテナにマウントする形になるので、`/Users`からパスを指定しないといけない。
 
 ## Docker Toolbox
 
