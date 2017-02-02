@@ -6,6 +6,18 @@ services:
       - ./nginx/conf.d:/etc/nginx/conf.d
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./nginx/html:/usr/share/nginx/html
+  nginx2:
+    image: nginx:latest
+    volumes:
+      - ./nginx2/conf.d:/etc/nginx/conf.d
+      - ./nginx2/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx2/html:/usr/share/nginx/html
+  nginx3:
+    image: nginx:latest
+    volumes:
+      - ./nginx3/conf.d:/etc/nginx/conf.d
+      - ./nginx3/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx3/html:/usr/share/nginx/html
   proxy:
     image: nginx:latest
     volumes:
