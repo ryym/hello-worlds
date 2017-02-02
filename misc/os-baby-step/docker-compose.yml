@@ -1,0 +1,6 @@
+version: '2'
+services:
+  os:
+    build: .
+    volumes:
+      - .:/os
