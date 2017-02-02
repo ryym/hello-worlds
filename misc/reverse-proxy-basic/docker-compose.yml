@@ -1,0 +1,18 @@
+version: '2'
+services:
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/html:/usr/share/nginx/html
+  proxy:
+    image: nginx:latest
+    volumes:
+      - ./proxy/conf.d:/etc/nginx/conf.d
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./proxy/html:/usr/share/nginx/html
+    links:
+      - nginx:nginx
+    ports:
+      - 8080:80
