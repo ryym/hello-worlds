@@ -1,59 +1,47 @@
+// To run: `go run weather-providers.go weather-api.go`
+
 package main
 
 import (
 	"encoding/json"
-	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"strings"
+	"time"
 )
-
-type weatherData struct {
-	Name string `json:"name"`
-	Main struct {
-		Kelvin float64 `json:"temp"`
-	} `json:"main"`
-}
-
-const WEATHER_API_URL = "http://api.openweathermap.org/data/2.5/weather"
 
 func main() {
 	apiKey := os.Getenv("WEATHER_API_KEY")
 	if apiKey == "" {
-		fmt.Println("API KEY is required.")
+		log.Fatal("Spefify WEATHER_API_KEY environment variable")
 		return
 	}
 
+	mw := multiWeatherProvider{
+		openWeatherMap{apiKey: apiKey},
+		bullshitWeatherProvider{},
+	}
+
 	http.HandleFunc("/weather/", func(w http.ResponseWriter, r *http.Request) {
+		begin := time.Now()
 		city := strings.SplitN(r.URL.Path, "/", 3)[2]
 
-		data, err := query(apiKey, city)
+		temp, err := mw.temperature(city)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		w.Header().Set("Content-Type", "application/json; charset=utf-8")
-		json.NewEncoder(w).Encode(data)
+		w.Header().Set("Content-Type", "appication/json; charset=utf-8")
+
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"city": city,
+			"temp": temp,
+			"took": time.Since(begin).String(),
+		})
 	})
 
-	fmt.Println("Server started")
+	log.Println("Server started (8080)")
 	http.ListenAndServe(":8080", nil)
-}
-
-func query(apiKey, city string) (weatherData, error) {
-	url := fmt.Sprintf("%s?APPID=%s&q=%s", WEATHER_API_URL, apiKey, city)
-	resp, err := http.Get(url)
-	if err != nil {
-		return weatherData{}, err
-	}
-	defer resp.Body.Close()
-
-	var d weatherData
-
-	if err := json.NewDecoder(resp.Body).Decode(&d); err != nil {
-		return weatherData{}, err
-	}
-
-	return d, nil
 }
