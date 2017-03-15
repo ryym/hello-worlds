@@ -28,13 +28,19 @@ func (w openWeatherMap) temperature(city string) (float64, error) {
 	defer resp.Body.Close()
 
 	var d struct {
-		Main struct {
+		Code    int    `json:"code"`
+		Message string `json:"message"`
+		Main    struct {
 			Kelvin float64 `json:"temp"`
 		} `json:"main"`
 	}
 
 	if err := json.NewDecoder(resp.Body).Decode(&d); err != nil {
 		return 0, err
+	}
+
+	if d.Code != 0 {
+		return 0, fmt.Errorf("openWeatherMap: %s", d.Message)
 	}
 
 	return d.Main.Kelvin, nil

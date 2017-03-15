@@ -14,8 +14,8 @@ import (
 func main() {
 	apiKey := os.Getenv("WEATHER_API_KEY")
 	if apiKey == "" {
-		log.Fatal("Spefify WEATHER_API_KEY environment variable")
-		return
+		// log.Fatal("Spefify WEATHER_API_KEY environment variable")
+		// return
 	}
 
 	mw := multiWeatherProvider{
