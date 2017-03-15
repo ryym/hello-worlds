@@ -19,8 +19,11 @@ func main() {
 	}
 
 	mw := multiWeatherProvider{
-		openWeatherMap{apiKey: apiKey},
-		bullshitWeatherProvider{},
+		timeoutSec: 10,
+		providers: []weatherProvider{
+			openWeatherMap{apiKey: apiKey},
+			bullshitWeatherProvider{},
+		},
 	}
 
 	http.HandleFunc("/weather/", func(w http.ResponseWriter, r *http.Request) {

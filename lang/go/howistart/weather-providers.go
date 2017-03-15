@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"math/rand"
 	"net/http"
@@ -46,13 +47,18 @@ func (w bullshitWeatherProvider) temperature(city string) (float64, error) {
 	return rand.Float64() * float64(len(city)), nil
 }
 
-type multiWeatherProvider []weatherProvider
+type multiWeatherProvider struct {
+	timeoutSec int
+	providers  []weatherProvider
+}
 
 func (w multiWeatherProvider) temperature(city string) (float64, error) {
-	temps := make(chan float64, len(w))
-	errs := make(chan error, len(w))
+	ps := w.providers
+	temps := make(chan float64, len(ps))
+	errs := make(chan error, len(ps))
+	waiter := time.After(time.Duration(w.timeoutSec) * time.Second)
 
-	for _, provider := range w {
+	for _, provider := range ps {
 		go func(p weatherProvider) {
 			k, err := provider.temperature(city)
 			if err != nil {
@@ -64,14 +70,16 @@ func (w multiWeatherProvider) temperature(city string) (float64, error) {
 	}
 
 	sum := 0.0
-	for i := 0; i < len(w); i++ {
+	for i := 0; i < len(ps); i++ {
 		select {
 		case temp := <-temps:
 			sum += temp
 		case err := <-errs:
 			return 0, err
+		case <-waiter:
+			return 0, errors.New("request timeout")
 		}
 	}
 
-	return sum / float64(len(w)), nil
+	return sum / float64(len(ps)), nil
 }
