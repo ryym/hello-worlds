@@ -7,6 +7,7 @@ use std::env;
 use std::fs::File;
 use std::path::Path;
 use std::error::Error;
+use std::io;
 
 // This struct represents the data in each row of the CSV file.
 #[derive(Debug, RustcDecodable)]
@@ -30,13 +31,18 @@ struct PopulationCount {
 
 fn print_usage(program: &str, opts: Options) {
     println!("{}",
-             opts.usage(&format!("Usage: {} [options] <data-path> <city>", program)))
+             opts.usage(&format!("Usage: {} [options] <city>", program)))
 }
 
-fn search<P: AsRef<Path>>(file_path: P, city: &str) -> Result<Vec<PopulationCount>, Box<Error>> {
+fn search<P: AsRef<Path>>(file_path: &Option<P>,
+                          city: &str)
+                          -> Result<Vec<PopulationCount>, Box<Error>> {
     let mut found = vec![];
-    let file = try!(File::open(file_path));
-    let mut rdr = csv::Reader::from_reader(file);
+    let input: Box<io::Read> = match *file_path {
+        None => Box::new(io::stdin()),
+        Some(ref file_path) => Box::new(try!(File::open(file_path))),
+    };
+    let mut rdr = csv::Reader::from_reader(input);
 
     for row in rdr.decode::<Row>() {
         let row = try!(row);
@@ -66,6 +72,10 @@ fn main() {
     let program = &args[0];
 
     let mut opts = Options::new();
+    opts.optopt("f",
+                "file",
+                "choose an input file, instead of using STDIN.",
+                "NAME");
     opts.optflag("h", "help", "Show this usage message.");
 
     let matches = match opts.parse(&args[1..]) {
@@ -78,10 +88,16 @@ fn main() {
         return;
     }
 
-    let data_path = &matches.free[0]; // free: Vector<String>
-    let city: &str = &matches.free[1];
+    let data_path = matches.opt_str("f");
 
-    match search(data_path, city) {
+    let city = if !matches.free.is_empty() {
+        &matches.free[0]
+    } else {
+        print_usage(&program, opts);
+        return;
+    };
+
+    match search(&data_path, city) {
         Ok(pops) => {
             for pop in pops {
                 println!("{}, {}: {:?}", pop.city, pop.country, pop.count)
