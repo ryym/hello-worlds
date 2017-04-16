@@ -1,8 +1,7 @@
-extern crate csv;
-
 use std::io;
 use std::fmt;
 use std::error::Error;
+use csv;
 
 #[derive(Debug)]
 pub enum CliError {
