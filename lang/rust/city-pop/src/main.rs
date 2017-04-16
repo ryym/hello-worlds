@@ -5,6 +5,8 @@ extern crate city_pop;
 
 use getopts::Options;
 use std::env;
+use std::process;
+use city_pop::errors::CliError;
 use city_pop::search::search;
 
 fn print_usage(program: &str, opts: Options) {
@@ -22,6 +24,7 @@ fn main() {
                 "choose an input file, instead of using STDIN.",
                 "NAME");
     opts.optflag("h", "help", "Show this usage message.");
+    opts.optflag("q", "quiet", "Silences errors and warnings.");
 
     let matches = match opts.parse(&args[1..]) {
         Ok(m) => m,
@@ -48,6 +51,7 @@ fn main() {
                 println!("{}, {}: {:?}", pop.city, pop.country, pop.count)
             }
         }
+        Err(CliError::NotFound) if matches.opt_present("q") => process::exit(1),
         Err(err) => println!("{}", err),
     }
 }
