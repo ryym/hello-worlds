@@ -2,12 +2,14 @@ extern crate getopts;
 extern crate rustc_serialize;
 extern crate csv;
 
+mod errors;
+
 use getopts::Options;
 use std::env;
 use std::fs::File;
 use std::path::Path;
-use std::error::Error;
 use std::io;
+use errors::CliError;
 
 // This struct represents the data in each row of the CSV file.
 #[derive(Debug, RustcDecodable)]
@@ -36,7 +38,7 @@ fn print_usage(program: &str, opts: Options) {
 
 fn search<P: AsRef<Path>>(file_path: &Option<P>,
                           city: &str)
-                          -> Result<Vec<PopulationCount>, Box<Error>> {
+                          -> Result<Vec<PopulationCount>, CliError> {
     let mut found = vec![];
     let input: Box<io::Read> = match *file_path {
         None => Box::new(io::stdin()),
@@ -61,7 +63,7 @@ fn search<P: AsRef<Path>>(file_path: &Option<P>,
     }
 
     if found.is_empty() {
-        Err(From::from("No matching cities with a population were found."))
+        Err(CliError::NotFound)
     } else {
         Ok(found)
     }
