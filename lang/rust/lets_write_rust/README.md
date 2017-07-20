@@ -1,0 +1,1 @@
+- [実践的なアプリケーションを書いてみよう！Rustの構造化プログラミング](https://employment.en-japan.com/engineerhub/entry/2017/07/19/110000)
