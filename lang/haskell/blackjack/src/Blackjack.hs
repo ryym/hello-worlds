@@ -12,7 +12,6 @@ module Blackjack
 data Card = A | N Int | J | Q | K deriving (Eq, Show)
 
 sumHand :: [Card] -> Int
-sumHand [] = 0
 sumHand cards =
     let possiblePoints = map toPoint cards
         scoreCands = foldl plusEach [0] possiblePoints
