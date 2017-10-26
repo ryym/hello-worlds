@@ -38,6 +38,7 @@ eval0 env (App e1 e2) = let val1 = eval0 env e1
                         in case val1 of
                             FunVal env' n body -> eval0 (Map.insert n val2 env') body
 
+-- Identity モナドで包む
 type Eval1 a = Identity a
 runEval1 :: Eval1 a -> a
 runEval1 ev = runIdentity ev
@@ -61,3 +62,59 @@ eval1 env (App e1 e2)   = do val1 <- eval1 env e1
 
 exampleExp :: Exp
 exampleExp = Lit 12 `Plus` (App (Abs "x" (Var "x")) (Lit 4 `Plus` Lit 2))
+
+-- ErrorT で包む
+type Eval2 a = ErrorT String Identity a
+runEval2 :: Eval2 a -> Either String a
+runEval2 ev = runIdentity (runErrorT ev)
+
+eval2a :: Env -> Exp -> Eval2 Value
+eval2a env (Lit i)      = return $ IntVal i
+eval2a env (Var n)      = maybe (fail ("undefined variable: " ++ n)) return $ Map.lookup n env
+eval2a env (Plus e1 e2) = do IntVal i1 <- eval2a env e1
+                             IntVal i2 <- eval2a env e2
+                             return $ IntVal (i1 + i2)
+eval2a env (Abs n e)    = return $ FunVal env n e
+eval2a env (App e1 e2)  = do val1 <- eval2a env e1
+                             val2 <- eval2a env e2
+                             case val1 of
+                                FunVal env' n body
+                                    -> eval2a (Map.insert n val2 env') body
+
+-- エラーの場合は例外ではなく Left を返すようにする
+eval2b :: Env -> Exp -> Eval2 Value
+eval2b env (Lit i)      = return $ IntVal i
+eval2b env (Var n)      = maybe (fail ("undefined variable: " ++ n)) return $ Map.lookup n env
+eval2b env (Plus e1 e2) = do e1' <- eval2b env e1
+                             e2' <- eval2b env e2
+                             case (e1', e2') of
+                                (IntVal i1, IntVal i2)
+                                    -> return $ IntVal (i1 + i2)
+                                _   -> throwError "type error"
+eval2b env (Abs n e)    = return $ FunVal env n e
+eval2b env (App e1 e2)  = do val1 <- eval2b env e1
+                             val2 <- eval2b env e2
+                             case val1 of
+                                FunVal env' n body
+                                    -> eval2b (Map.insert n val2 env') body
+                                _   -> throwError "type error"
+
+-- 最終型 (Map.lookup での失敗もハンドルする)
+eval2 :: Env -> Exp -> Eval2 Value
+eval2 env (Lit i)      = return $ IntVal i
+eval2 env (Var n)      = case Map.lookup n env of
+                            Nothing -> fail ("undefined variable: " ++ n)
+                            Just val -> return val
+eval2 env (Plus e1 e2) = do e1' <- eval2 env e1
+                            e2' <- eval2 env e2
+                            case (e1', e2') of
+                                (IntVal i1, IntVal i2)
+                                    -> return $ IntVal (i1 + i2)
+                                _   -> throwError "type error"
+eval2 env (Abs n e)    = return $ FunVal env n e
+eval2 env (App e1 e2)  = do val1 <- eval2 env e1
+                            val2 <- eval2 env e2
+                            case val1 of
+                                FunVal env' n body
+                                    -> eval2 (Map.insert n val2 env') body
+                                _   -> throwError "type error"
