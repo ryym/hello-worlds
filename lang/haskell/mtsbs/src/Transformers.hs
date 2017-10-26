@@ -5,7 +5,7 @@ module Transformers
     ) where
 
 import Control.Monad.Identity
-import Control.Monad.Error -- Deprecated..!
+import Control.Monad.Except
 import Control.Monad.Reader
 import Control.Monad.State
 import Control.Monad.Writer
@@ -63,10 +63,10 @@ eval1 env (App e1 e2)   = do val1 <- eval1 env e1
 exampleExp :: Exp
 exampleExp = Lit 12 `Plus` (App (Abs "x" (Var "x")) (Lit 4 `Plus` Lit 2))
 
--- ErrorT で包む
-type Eval2 a = ErrorT String Identity a
+-- ExceptT で包む
+type Eval2 a = ExceptT String Identity a
 runEval2 :: Eval2 a -> Either String a
-runEval2 ev = runIdentity (runErrorT ev)
+runEval2 ev = runIdentity (runExceptT ev)
 
 eval2a :: Env -> Exp -> Eval2 Value
 eval2a env (Lit i)      = return $ IntVal i
