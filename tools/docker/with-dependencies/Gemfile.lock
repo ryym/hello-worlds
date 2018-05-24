@@ -1,0 +1,15 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    dotenv (2.4.0)
+    hola_ryym (0.2.1)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  dotenv
+  hola_ryym
+
+BUNDLED WITH
+   1.15.4

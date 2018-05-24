@@ -1,0 +1,29 @@
+version: '3'
+services:
+  app:
+    build: .
+    command: ruby a.rb
+    volumes:
+      - .:/app
+
+      # bundle install 先を volume で永続化しておく。
+      # bundle を追加しても再ビルドはせず、普通にコンテナ内で
+      # bundle install を走らせればいい。
+      - bundle_install:/usr/local/bundle
+
+  front:
+    build:
+      context: .
+      dockerfile: dk-node/Dockerfile
+    command: node frontend/index.js
+    volumes:
+      - .:/front
+
+      # 同上
+      - node_modules:/front/node_modules
+
+volumes:
+  bundle_install:
+    driver: local
+  node_modules:
+    driver: local
